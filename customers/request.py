@@ -31,7 +31,7 @@ def get_single_customer(id):
     # Variable to hold the found animal, if it exists
     requested_customer = None
 
-    # Iterate the ANIMALS list above. Very similar to the
+    # Iterate the CUSTOMERS list above. Very similar to the
     # for..of loops you used in JavaScript.
     for customer in CUSTOMERS:
         # Dictionaries in Python use [] notation to find a key
@@ -40,3 +40,18 @@ def get_single_customer(id):
             requested_customer = customer
 
     return requested_customer
+
+def delete_customer(id):
+    # Initial -1 value for customer index, in case one isn't found
+    customer_index = -1
+
+    # Iterate the CUSTOMERS list, but use enumerate() so that you
+    # can access the index value of each item
+    for index, customer in enumerate(CUSTOMERS):
+        if customer["id"] == id:
+            # Found the customer. Store the current index.
+            customer_index = index
+
+    # If the customer was found, use pop(int) to remove it from list
+    if customer_index >= 0:
+        CUSTOMERS.pop(customer_index)
