@@ -1,0 +1,10 @@
+{
+    "sqltools.connections": [
+        {
+            "driver": "SQLite",
+            "name": "Python Kennels",
+            "database": "kennel.db"
+        }
+    ],
+    "sqltools.useNodeRuntime": true
+}

@@ -1,45 +1,73 @@
-CUSTOMERS = [
-      {
-      "id": 1,
-      "name": "Hannah Hall",
-      "address": "7002 Chestnut Ct"
-    },
-    {
-      "id": 2,
-      "name": "Esther Sanders",
-      "address": "10 Main St"
-    },
-    {
-      "id": 3,
-      "name": "Heather",
-      "address": "1 Broadway"
-    },
-    {
-      "email": "esther@esther.com",
-      "password": "1234",
-      "name": "Esther Sanders",
-      "id": 4
-    }
-]
+import sqlite3
+import json
+from models import Customer
 
 
 def get_all_customers():
-    return CUSTOMERS
+    # Open a connection to the database
+    with sqlite3.connect("./kennel.db") as conn:
+
+        # Just use these. It's a Black Box.
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        # Write the SQL query to get the information you want
+        db_cursor.execute("""
+        SELECT
+            c.id,
+            c.address,
+            c.name,
+            c.email,
+            c.password
+        FROM customer c
+        """)
+
+        # Initialize an empty list to hold all customer representations
+        customers = []
+
+        # Convert rows of data into a Python list
+        dataset = db_cursor.fetchall()
+
+        # Iterate list of data returned from database
+        for row in dataset:
+
+            # Create an customer instance from the current row.
+            # Note that the database fields are specified in
+            # exact order of the parameters defined in the
+            # Customer class above.
+            customer = Customer(row['id'], row['address'], row['name'], row['email'], row['password'])
+
+            customers.append(customer.__dict__)
+
+    # Use `json` package to properly serialize list as JSON
+    return json.dumps(customers)
 
 # Function with a single parameter
 def get_single_customer(id):
-    # Variable to hold the found animal, if it exists
-    requested_customer = None
+    with sqlite3.connect("./kennel.db") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
 
-    # Iterate the CUSTOMERS list above. Very similar to the
-    # for..of loops you used in JavaScript.
-    for customer in CUSTOMERS:
-        # Dictionaries in Python use [] notation to find a key
-        # instead of the dot notation that JavaScript used.
-        if customer["id"] == id:
-            requested_customer = customer
+        # Use a ? parameter to inject a variable's value
+        # into the SQL statement.
+        db_cursor.execute("""
+        SELECT
+            c.id,
+            c.address,
+            c.name,
+            c.email,
+            c.password
+        FROM customer c
+        WHERE c.id = ?
+        """, ( id, ))
 
-    return requested_customer
+        # Load the single result into memory
+        data = db_cursor.fetchone()
+
+        # Create an animal instance from the current row
+        customer = Customer(data['id'], data['address'], data['name'], data['email'], data['password'])
+
+        return json.dumps(customer.__dict__)
 
 def delete_customer(id):
     # Initial -1 value for customer index, in case one isn't found
@@ -64,3 +92,28 @@ def update_customer(id, new_customer):
             # Found the customer. Update the value.
             CUSTOMERS[index] = new_customer
             break
+
+def get_customer_by_email(email):
+
+    with sqlite3.connect("./kennel.db") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        select
+            c.id,
+            c.name,
+            c.address,
+            c.email,
+            c.password
+        from Customer c
+        WHERE c.email = ?
+        """, ( email, ))
+
+        data = db_cursor.fetchone()
+
+        # Create an customer instance from the current row
+        customer = Customer(data['id'], data['name'], data['address'])
+
+        # Return the JSON serialized Customer object
+        return json.dumps(customer.__dict__)
