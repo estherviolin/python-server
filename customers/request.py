@@ -110,10 +110,14 @@ def get_customer_by_email(email):
         WHERE c.email = ?
         """, ( email, ))
 
-        data = db_cursor.fetchone()
+        dataset = db_cursor.fetchall()
 
-        # Create an customer instance from the current row
-        customer = Customer(data['id'], data['name'], data['address'])
+        customers = []
+
+        for row in dataset:
+            customer = Customer(row['id'], row['address'], row['name'], row['email'], row['password'])
+
+            customers.append(customer.__dict__)      
 
         # Return the JSON serialized Customer object
-        return json.dumps(customer.__dict__)
+        return json.dumps(customers)
