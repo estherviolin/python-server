@@ -1,6 +1,6 @@
 import sqlite3
 import json
-from models import Animal
+from models import Animal, Location, Customer
 
 ANIMALS = [
     {
@@ -64,8 +64,7 @@ def get_all_animals():
             # exact order of the parameters defined in the
             # Animal class above.
             animal = Animal(row['id'], row['name'], row['breed'],
-                            row['status'], row['location_id'],
-                            row['customer_id'])
+                            row['status'], row['customer_id'], row['location_id'])
 
             animals.append(animal.__dict__)
 
@@ -83,12 +82,16 @@ def get_single_animal(id):
         db_cursor.execute("""
         SELECT
             a.id,
-            a.name,
+            a.name animal_name,
             a.breed,
             a.status,
             a.customer_id,
-            a.location_id
+            a.location_id,
+            c. name customer_name,
+            l.name location_name
         FROM animal a
+        JOIN customer c ON c.id = a.customer_id
+        JOIN location l ON l.id = a.location_id
         WHERE a.id = ?
         """, ( id, ))
 
@@ -96,8 +99,14 @@ def get_single_animal(id):
         data = db_cursor.fetchone()
 
         # Create an animal instance from the current row
-        animal = Animal(data['id'], data['name'], data['breed'], data['status'],
+        animal = Animal(data['id'], data['animal_name'], data['breed'], data['status'],
                         data['location_id'], data['customer_id'])
+
+        location = Location(data['location_name'])
+        animal.location = location.__dict__
+
+        customer = Customer("", "", data['customer_name'], "", "")
+        animal.customer = customer.__dict__
 
         return json.dumps(animal.__dict__)
 
