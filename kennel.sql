@@ -65,7 +65,13 @@ SELECT * FROM Location;
 SELECT * FROM Customer;
 SELECT * FROM Employee;
 
-UPDATE Animal
-SET breed = "Siamese Cat"
-WHERE id = 3;
 
+SELECT * FROM Animal
+ORDER BY id DESC;
+
+UPDATE Animal 
+SET location_id = 2
+WHERE name = "Doodles";
+
+UPDATE Animal 
+SET location_id = 2;
