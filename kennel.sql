@@ -65,3 +65,7 @@ SELECT * FROM Location;
 SELECT * FROM Customer;
 SELECT * FROM Employee;
 
+UPDATE Animal
+SET breed = "Siamese Cat"
+WHERE id = 3;
+

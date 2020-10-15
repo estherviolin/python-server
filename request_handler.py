@@ -2,10 +2,11 @@ from animals.request import get_animal_by_status
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from locations.request import create_location
-from animals import get_all_animals, get_single_animal, create_animal, delete_animal, update_animal, get_animal_by_location, get_animal_by_status
+from animals import get_all_animals, get_single_animal, delete_animal, update_animal, get_animal_by_location, get_animal_by_status
 from locations import get_all_locations, get_single_location, create_location, delete_location, update_location
 from employees import get_all_employees, get_single_employee, create_employee, delete_employee, update_employee, get_employee_by_location
 from customers import get_all_customers, get_single_customer, delete_customer, update_customer, get_customer_by_email
+#create_animal,
 
 # Here's a class. It inherits from another class.
 
@@ -23,7 +24,7 @@ class HandleRequests(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
-        self.send_header('Access-Control-Allow-Headers', 'X-Requested-With')
+        self.send_header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type')
         self.end_headers()
 
     def parse_url(self, path):
